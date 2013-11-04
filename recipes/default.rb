@@ -1,17 +1,20 @@
 #
-# Cookbook Name:: mms-agent
+# Cookbook Name:: mms_agent
 # Recipe:: default
 #
-# Copyright 2011, Treasure Data, Inc.
-#
-# All rights reserved - Do Not Redistribute
-#
+
 include_recipe 'python'
+
 
 require 'fileutils'
 
 # munin-node for hardware info
 package 'munin-node'
+
+group node[:mms_agent][:user]
+user node[:mms_agent][:user] do
+  gid node[:mms_agent][:group]
+end
 
 # download
 package 'unzip'
@@ -52,9 +55,19 @@ ruby_block 'modify settings.py' do
   end
 end
 
+directory '/var/log/mms-agent' do
+  owner node[:mms_agent][:user]
+  group node[:mms_agent][:grioup]
+end
+
+service "mms-agent" do
+  provider Chef::Provider::Service::Upstart
+  supports :restart => true, :start => true, :stop => true
+end
+
 template "mms-agent.upstart.conf" do
   path "/etc/init/mms-agent.conf"
-  source "mms-agent.upstart.conf"
+  source "mms-agent.upstart.conf.erb"
   owner "root"
   group "root"
   mode "0644"
