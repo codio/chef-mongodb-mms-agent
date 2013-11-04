@@ -52,12 +52,15 @@ ruby_block 'modify settings.py' do
   end
 end
 
-# runit
-runit_service 'mms-agent' do
-  template_name 'mms-agent'
-  cookbook 'mongodb-mms-agent'
-  options({
-    :user => node[:mongodb][:user],
-    :group => node[:mongodb][:group]
-  })
+template "mms-agent.upstart.conf" do
+  path "/etc/init/mms-agent.conf"
+  source "mms-agent.upstart.conf"
+  owner "root"
+  group "root"
+  mode "0644"
+  notifies :restart, resources(:service => "mms-agent")
+end
+
+service "mms-agent" do
+  action [:enable, :start]
 end
