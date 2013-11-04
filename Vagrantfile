@@ -71,12 +71,13 @@ Vagrant.configure("2") do |config|
 
   config.vm.provision :chef_solo do |chef|
     chef.json = {
-      :mms_agent => {
-        :api_key => '123',
-        :secret_key => '123'
-      }
+      # :mms_agent => {
+      #   :api_key => '123',
+      #   :secret_key => '123'
+      # }
     }
-
+    chef.encrypted_data_bag_secret_key_path = '../../chef-repo/.chef/encrypted_data_bag_secret'
+    chef.data_bags_path = "../../chef-repo/data_bags"
     chef.run_list = [
       "recipe[apt]",
       "recipe[mongodb-mms-agent::default]"

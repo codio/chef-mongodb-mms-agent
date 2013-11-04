@@ -23,3 +23,5 @@ API Key, and the Secret Key are required. Please get them at your [MMS Settings 
 - `node[:mms_agent][:secret_key`] - Your MMS-Agent secret key (required)
 - `node[:mms_agent][:user]` - The user to run MMS-agent as (default: `mmsagent`)
 - `node[:mms_agent][:group]` - The group to run MMS-agent as (default: `mmsagent`)
+
+If the encrypted data bag `keys/mms_agent` exists, then the `api_key` and `secret_key` will be used from that.

@@ -5,12 +5,24 @@
 
 include_recipe 'python'
 
+# Load the MMS agent keys from the data bag `keys.mms_agent`.
+begin
+  data_bag = Chef::EncryptedDataBagItem.load('keys', 'mms_agent')
+  node.default[:mms_agent][:api_key] = data_bag['api_key']
+  node.default[:mms_agent][:secret_key] = data_bag['secret_key']
+rescue
+  log "Unable to find encrypted data bag: 'keys.mms_agent'" do
+    level :warn
+  end
+end
+
 
 require 'fileutils'
 
 # munin-node for hardware info
 package 'munin-node'
 
+# Create the system user and group.
 group node[:mms_agent][:user]
 user node[:mms_agent][:user] do
   gid node[:mms_agent][:group]
@@ -18,7 +30,7 @@ end
 
 # download
 package 'unzip'
-remote_file '/tmp/10gen-mms-agent.zip' do
+remote_file "#{Chef::Config[:file_cache_path]}/10gen-mms-agent.zip" do
   source 'https://mms.10gen.com/settings/10gen-mms-agent.zip'
 end
 
@@ -71,7 +83,7 @@ template "mms-agent.upstart.conf" do
   owner "root"
   group "root"
   mode "0644"
-  notifies :restart, resources(:service => "mms-agent")
+  notifies :restart, "service[mms-agent]"
 end
 
 service "mms-agent" do
