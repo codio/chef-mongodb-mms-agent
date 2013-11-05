@@ -1,0 +1,17 @@
+# Ubuntu upstart file at /etc/init/mms-backup.conf
+
+description "MongoDB Monitoring Service (MMS) Backup"
+
+chdir /usr/local/share/mms-agent/backup
+
+setuid <%= node[:mms_agent][:user] %>
+setgid <%= node[:mms_agent][:group] %>
+
+post-stop script
+echo "$(date +'%Y-%m-%d %T,000') INFO mms-backup stopped" >> /var/log/mms-agent/backup.log
+end script
+
+start on runlevel [2345]
+stop on runlevel [06]
+
+exec nohup /usr/local/share/mms-agent/backup/agent >> /var/log/mms-agent/backup.log 2>&1

@@ -80,7 +80,8 @@ Vagrant.configure("2") do |config|
     chef.data_bags_path = "../../chef-repo/data_bags"
     chef.run_list = [
       "recipe[apt]",
-      "recipe[mongodb-mms-agent::default]"
+      "recipe[mongodb-mms-agent::default]",
+      "recipe[mongodb-mms-agent::backup]"
     ]
   end
 end
