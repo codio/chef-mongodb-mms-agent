@@ -32,13 +32,14 @@ end
 package 'unzip'
 remote_file "#{Chef::Config[:file_cache_path]}/10gen-mms-agent.zip" do
   source 'https://mms.10gen.com/settings/10gen-mms-agent.zip'
+  not_if { File.exist?('/usr/local/share/mms-agent') }
 end
 
 # unzip
 bash 'unzip 10gen-mms-agent' do
-  cwd '/tmp/'
+  cwd Chef::Config[:file_cache_path]
   code <<-EOH
-    unzip -o -d /usr/local/share/ ./10gen-mms-agent.zip
+    unzip -o -d /usr/local/share/ 10gen-mms-agent.zip
   EOH
   not_if { File.exist?('/usr/local/share/mms-agent') }
 end
