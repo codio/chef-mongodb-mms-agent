@@ -8,19 +8,33 @@ NOTE: This cookbook only installs the MMS agent program, not MongoDB itself. Usi
 This cookbook is based on [treasure-data/chef-mongodb-mms-agent](https://github.com/treasure-data/chef-mongodb-mms-agent).
 
 
-## REQUIREMENTS
+## Recipes
 
-This cookbook has these external dependencies.
+### default
 
-- python cookbook
+Installs and configures the MMS monitoring agent.
 
-
-## ATTRIBUTES
+#### Attributes
 
 API Key, and the Secret Key are required. Please get them at your [MMS Settings page](https://mms.10gen.com/settings).
 
 - `node[:mms_agent][:api_key]` - Your MMS-Agent API key (required)
 - `node[:mms_agent][:secret_key`] - Your MMS-Agent secret key (required)
+- `node[:mms_agent][:user]` - The user to run MMS-agent as (default: `mmsagent`)
+- `node[:mms_agent][:group]` - The group to run MMS-agent as (default: `mmsagent`)
+
+If the encrypted data bag `keys/mms_agent` exists, then the `api_key` and `secret_key` will be used from that.
+
+
+### backup
+
+Installs and configures the MMS backup agent.
+
+#### Attributes
+
+API Key is required. Please get it at your [MMS Settings page](https://mms.10gen.com/settings).
+
+- `node[:mms_agent][:api_key]` - Your MMS-Agent API key (required)
 - `node[:mms_agent][:user]` - The user to run MMS-agent as (default: `mmsagent`)
 - `node[:mms_agent][:group]` - The group to run MMS-agent as (default: `mmsagent`)
 
