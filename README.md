@@ -35,7 +35,7 @@ from that.
 
 ### backup
 
-Installs and configures the MMS backup agent.
+Installs and configures the MMS backup agent v20131118.0.
 
 #### Attributes
 
