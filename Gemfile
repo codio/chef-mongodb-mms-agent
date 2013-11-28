@@ -1,4 +1,12 @@
 source 'https://rubygems.org'
 
 gem 'berkshelf'
-gem 'foodcritic', '~>3.0.3'
+gem 'foodcritic'
+gem 'test-kitchen', github: 'test-kitchen/test-kitchen'
+gem 'serverspec'
+gem 'guard-kitchen'
+gem 'guard-foodcritic'
+
+group :integration do
+  gem 'kitchen-vagrant'
+end

@@ -70,7 +70,7 @@ end
 
 directory '/var/log/mms-agent' do
   owner node[:mms_agent][:user]
-  group node[:mms_agent][:grioup]
+  group node[:mms_agent][:group]
 end
 
 service "mms-agent" do
