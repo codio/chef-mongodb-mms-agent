@@ -49,6 +49,26 @@ If the encrypted data bag `keys/mms_agent` exists, then the `api_key` and `secre
 from that.
 
 
+### Development
+
+Cookbooks are strictly versioned, and the Chef server will lock and freeze each cookbook you upload.
+This means that unless you bump the version number of the cookbook, the Chef server will not update
+it when you upload.
+
+All Codio servers belong to a Chef role and environment, and each environment *MUST* specify the
+version which that environment will use. This protects that environment against new cookbooks
+that may not yet be ready. Once they are ready, a simple edit of the environment will suffice.
+
+In order to develop and test new cookbook versions, you will need to bump the version of the
+cookbook just the once, and then upload that. Because the production environment uses specific
+cookbook versions, you are safe to upload new version(s) and test these before eventually promoting
+your new version to production.
+
+Wherever possible, cookbooks should first be tested locally using Vagrant, and development should
+take place in a branch. The cookbook minor version number should be incremented to ensure safe usage
+of the Cookbook.
+
+
 ## Testing
 
 Make sure you've installed the bundle with:
