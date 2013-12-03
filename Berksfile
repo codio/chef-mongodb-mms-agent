@@ -2,4 +2,9 @@ site :opscode
 
 metadata
 
-cookbook 'apt', group: 'integration'
+cookbook 'monitor', chef_api: :config
+cookbook 'base', chef_api: :config
+
+group :development, :integration do
+  cookbook 'apt'
+end

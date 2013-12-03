@@ -49,6 +49,12 @@ If the encrypted data bag `keys/mms_agent` exists, then the `api_key` and `secre
 from that.
 
 
+### role
+
+The mongodb-mms-agent role recipe which includes `monitor::master`, `mongodb-mms-agent::default`,
+`mongodb-mms-agent::backup` and `base::default` recipes.
+
+
 ### Development
 
 Cookbooks are strictly versioned, and the Chef server will lock and freeze each cookbook you upload.
