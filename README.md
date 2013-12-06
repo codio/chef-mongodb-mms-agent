@@ -89,3 +89,12 @@ your integration tests.
 ```bash
 $ bundle exec guard
 ```
+
+### With Vagrant
+
+Install the Chef Zero Vagrant plugin and run Vagrant:
+
+```bash
+$ vagrant plugin install vagrant-chef-zero
+$ vagrant up
+```

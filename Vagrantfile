@@ -9,14 +9,19 @@ Vagrant.configure("2") do |config|
   config.omnibus.chef_version = :latest
   config.berkshelf.enabled = true
 
-  config.vm.provision :chef_solo do |chef|
+  config.chef_zero.chef_repo_path = 'test/fixtures/'
+
+  config.vm.provision :chef_client do |chef|
     chef.json = {
-      vagrant: {}
+      vagrant: true, # required in order to detect vagrant usage in recipes.
+      monitor: {
+        master_address: 'localhost',
+        environment_aware_search: false
+      }
     }
+    chef.encrypted_data_bag_secret_key_path = 'test/fixtures/encrypted_data_bag_secret'
     chef.run_list = [
-        "recipe[apt]",
-        "recipe[mongodb-mms-agent::default]",
-        "recipe[mongodb-mms-agent::backup]"
+        "recipe[mongodb-mms-agent::role]"
     ]
   end
 end
