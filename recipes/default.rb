@@ -17,8 +17,6 @@ rescue
 end
 
 
-require 'fileutils'
-
 # munin-node for hardware info
 package 'munin-node'
 
@@ -30,18 +28,19 @@ end
 
 # download
 package 'unzip'
-remote_file "#{Chef::Config[:file_cache_path]}/10gen-mms-agent.zip" do
+remote_file "#{Chef::Config[:file_cache_path]}/mms-agent-#{node[:mms_agent][:checksum]}.zip" do
   source 'https://mms.10gen.com/settings/10gen-mms-agent.zip'
-  not_if { File.exist?('/usr/local/share/mms-agent') }
+  checksum node[:mms_agent][:checksum]
 end
 
 # unzip
 bash 'unzip 10gen-mms-agent' do
   cwd Chef::Config[:file_cache_path]
   code <<-EOH
-    unzip -o -d /usr/local/share/ 10gen-mms-agent.zip
+    unzip -o -d mms-agent-#{node[:mms_agent][:checksum]} mms-agent-#{node[:mms_agent][:checksum]}.zip
+    cp -r mms-agent-#{node[:mms_agent][:checksum]}/mms-agent/* /usr/local/share/mms-agent
   EOH
-  not_if { File.exist?('/usr/local/share/mms-agent') }
+  not_if { ::File.exist? "#{Chef::Config[:file_cache_path]}/mms-agent-#{node[:mms_agent][:checksum]}" }
 end
 
 # install pymongo
@@ -53,17 +52,18 @@ end
 ruby_block 'modify settings.py' do
   block do
     orig_s = ''
-    open('/usr/local/share/mms-agent/settings.py') { |f|
+    open '/usr/local/share/mms-agent/settings.py' do |f|
       orig_s = f.read
-    }
+    end
     s = orig_s
     s = s.gsub(/mms\.10gen\.com/, 'mms.10gen.com')
     s = s.gsub(/@API_KEY@/, node[:mms_agent][:api_key])
     s = s.gsub(/@SECRET_KEY@/, node[:mms_agent][:secret_key])
     if s != orig_s
-      open('/usr/local/share/mms-agent/settings.py','w') { |f|
-        f.puts(s)
-      }
+      open '/usr/local/share/mms-agent/settings.py','w' do |f|
+        f.puts s
+      end
+      notifies :restart, resources(:service => 'mms-agent')
     end
   end
 end
