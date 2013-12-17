@@ -55,7 +55,7 @@ The mongodb-mms-agent role recipe which includes `monitor::master`, `mongodb-mms
 `mongodb-mms-agent::backup` and `base::default` recipes.
 
 
-### Development
+## Development
 
 Cookbooks are strictly versioned, and the Chef server will lock and freeze each cookbook you upload.
 This means that unless you bump the version number of the cookbook, the Chef server will not update
@@ -74,17 +74,18 @@ Wherever possible, cookbooks should first be tested locally using Vagrant, and d
 take place in a branch. The cookbook minor version number should be incremented to ensure safe usage
 of the Cookbook.
 
-
 ## Testing
 
-Make sure you've installed the bundle with:
+This cookbook uses [Test Kitchen](http://kitchen.ci/), [Foodcritic](http://acrmp.github.io/foodcritic/)
+together with Guard and Vagrant for continuous testing.
 
 ```bash
 $ bundle install
+$ bundle exec kitchen test
 ```
 
-Then start up `guard`, which will run both foodcritic to lint your code, and test-kitchen to run
-your integration tests.
+Use continuous testing by having Guard watch for changes and responding by running the tests
+automatically:
 
 ```bash
 $ bundle exec guard
@@ -92,9 +93,12 @@ $ bundle exec guard
 
 ### With Vagrant
 
-Install the Chef Zero Vagrant plugin and run Vagrant:
+*In order to support data bags, Chef Zero is used with Vagrant. However, there is a [bug](https://github.com/andrewgross/vagrant-chef-zero/pull/21#issuecomment-30649458) in the
+Vagrant plugin that causes things to fail when trying to download cookbooks from our Chef server. In
+the meantim, you should use Chef Solo.*
+
+Run Vagrant:
 
 ```bash
-$ vagrant plugin install vagrant-chef-zero
 $ vagrant up
 ```
