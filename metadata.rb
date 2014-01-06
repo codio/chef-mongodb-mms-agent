@@ -4,10 +4,9 @@ maintainer_email "jmoss@codio.com"
 license          "All rights reserved"
 description      "Installs/Configures MongoDB mms-agent"
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
-version          "1.5.0"
+version          "1.6.0"
 
-depends 'monitor'
-depends 'base'
+depends 'base', '1.2.1'
 depends 'python'
 depends 'chef-sugar'
 
