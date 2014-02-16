@@ -27,45 +27,31 @@ user node[:mms_agent][:user] do
 end
 
 # download
+
+execute "wget https://mms.mongodb.com/settings/mmsAgent/#{node[:mms_agent][:api_key]}/mms-monitoring-agent-codio.zip" do
+  cwd Chef::Config[:file_cache_path]
+end
+
 package 'unzip'
-remote_file "#{Chef::Config[:file_cache_path]}/mms-agent-#{node[:mms_agent][:checksum]}.zip" do
-  source 'https://mms.10gen.com/settings/10gen-mms-agent.zip'
-  checksum node[:mms_agent][:checksum]
+remote_file "#{Chef::Config[:file_cache_path]}/mms-monitoring-agent.zip" do
+  source "file://#{Chef::Config[:file_cache_path]}/mms-monitoring-agent-codio.zip"
+  notifies :run, "bash[unzip_mms_monitoring_agent]", :immediately
+  notifies :restart, "service[mms-agent]"
 end
 
 # unzip
-bash 'unzip 10gen-mms-agent' do
+bash 'unzip_mms_monitoring_agent' do
   cwd Chef::Config[:file_cache_path]
   code <<-EOH
-    unzip -o -d mms-agent-#{node[:mms_agent][:checksum]} mms-agent-#{node[:mms_agent][:checksum]}.zip
-    cp -r mms-agent-#{node[:mms_agent][:checksum]}/mms-agent/* /usr/local/share/mms-agent
+    unzip -o -d mms-monitoring-agent mms-monitoring-agent.zip
+    cp -r mms-monitoring-agent/mms-agent/* /usr/local/share/mms-agent
   EOH
-  not_if { ::File.exist? "#{Chef::Config[:file_cache_path]}/mms-agent-#{node[:mms_agent][:checksum]}" }
+  action :nothing
 end
 
 # install pymongo
 python_pip 'pymongo' do
   action :install
-end
-
-# modify settings.py
-ruby_block 'modify settings.py' do
-  block do
-    orig_s = ''
-    open '/usr/local/share/mms-agent/settings.py' do |f|
-      orig_s = f.read
-    end
-    s = orig_s
-    s = s.gsub(/mms\.10gen\.com/, 'mms.10gen.com')
-    s = s.gsub(/@API_KEY@/, node[:mms_agent][:api_key])
-    s = s.gsub(/@SECRET_KEY@/, node[:mms_agent][:secret_key])
-    if s != orig_s
-      open '/usr/local/share/mms-agent/settings.py','w' do |f|
-        f.puts s
-      end
-      notifies :restart, resources(:service => 'mms-agent')
-    end
-  end
 end
 
 directory '/var/log/mms-agent' do
