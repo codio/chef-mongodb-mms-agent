@@ -20,8 +20,8 @@ execute "curl -OL https://mms.mongodb.com/download/agent/backup/mongodb-mms-back
   cwd Chef::Config[:file_cache_path]
 end
 
-execute "dpkg -i mongodb-mms-backup-agent_#{node[:backup_agent][:version]}_amd64.deb" do
-  cwd Chef::Config[:file_cache_path]
+dpkg_package "mongodb-mms-backup-agent" do
+  source "#{Chef::Config[:file_cache_path]}/mongodb-mms-backup-agent_#{node[:backup_agent][:version]}_amd64.deb"
 end
 
 service 'mongodb-mms-backup-agent' do

@@ -21,8 +21,8 @@ execute "curl -OL https://mms.mongodb.com/download/agent/monitoring/mongodb-mms-
   cwd Chef::Config[:file_cache_path]
 end
 
-execute "dpkg -i mongodb-mms-monitoring-agent_#{node[:mms_agent][:version]}_amd64.deb" do
-  cwd Chef::Config[:file_cache_path]
+dpkg_package "mongodb-mms-monitoring-agent" do
+  source "#{Chef::Config[:file_cache_path]}/mongodb-mms-monitoring-agent_#{node[:mms_agent][:version]}_amd64.deb"
 end
 
 service 'mongodb-mms-monitoring-agent' do
